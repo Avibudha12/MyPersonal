@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <title>Artwork</title>
+     <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+              <h2 class="logo"> ArtWork </h2>  
+            </div>
+            <div class="menu">
+<ul>
+    <li><a href="#" style="--i:1:" class="active">HOME</a></li>
+    <li><a href="about.html" style="--i:2;">ABOUT</a></li>
+    <li><a href="service.html" style="--i:3;">SERVICE</a></li>
+    <li><a href="design.html" style="--i:4;">CONTENT</a></li>
+    <li><a href="contact.html" style="--i:5;">CONTACT</a></li>
+</ul>
+
+            </div>
+            <div class="search">
+                <input class="srch" type="search" name="" placeholder="type to text">
+                <a href="#"><button class="btn">Search</button></a>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Show Your Creativity &<br> <span>Anime Art</span>  </h1>
+            <p class="par">You can show your Art to the world through us.<br> We can help you develop your skill and upgrade it <br>to the next level  </p>
+
+            <button class="cn"><a href="#">JOIN US</a></button>
+            <div class="form">
+                <h2>login Here</h2>
+                <input type="email" name="email" placeholder="Enter Email Here">
+                <input type="password" name="" placeholder="Enter Password Here">
+                <button class="btnn" id="loginBtn"> <a href="#">login</a></button>
+
+                <p class="link">Don't have an account <br>
+                <a href="#">Sign up</a> here</p>
+                <p class="liw">log in with</p>
+
+                <div class="icons">
+                    <a href="https://www.facebook.com/" target="_blank"><ion-icon name="logo-facebook"> </ion-icon></a>
+                    <a href="https://www.instagram.com/" target="_blank"><ion-icon name="logo-instagram"> </ion-icon></a>
+                    <a href="#"><ion-icon name="logo-twitter"> </ion-icon></a>
+                    <a href="#"><ion-icon name="logo-linkedin"> </ion-icon></a>
+                    <a href="#"><ion-icon name="logo-skype"> </ion-icon></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <h3>Art Work</h3>
+            <p>kya kar raha he madarchot muji randike gand maru teri follow kar muji <br>Abishek Budha is the best </p>
+            <ul class="socials">
+                <li><a href="https://www.facebook.com/" target="_blank"><ion-icon name="logo-facebook"> </ion-icon></a></li>
+                <li><a href="https://www.instagram.com/" target="_blank"><ion-icon name="logo-instagram"> </ion-icon></a></li>
+                <li><a href="#"><ion-icon name="logo-twitter"> </ion-icon></a></li>
+                <li><a href="https://www.linkedin.com/feed/"><ion-icon name="logo-linkedin"> </ion-icon></a></li>
+                <li><a href="#"><ion-icon name="logo-skype"> </ion-icon></a></li>
+            </ul>
+        </div>
+        <div class="footer-bottem">
+            <p>copyright &copy;2023 ArtWork. designed by <span>Avi</span></p>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script>
+// Redirect to dashboard.html on login button click
+const loginBtn = document.getElementById('loginBtn');
+if (loginBtn) {
+  loginBtn.onclick = function(e) {
+    e.preventDefault();
+    window.location.href = 'dashboard.html';
+  };
+}
+    </script>
+</body>
+</html>
