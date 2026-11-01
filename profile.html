@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile - Artwork</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body, .main { background: #111 !important; color: #f5f5f5; }
+        .profile-header { display: flex; align-items: center; gap: 40px; margin-top: 40px; }
+        .profile-avatar-wrap { position: relative; width: 140px; height: 140px; }
+        .profile-avatar { width: 140px; height: 140px; border-radius: 50%; border: 3px solid #444; background: #222; }
+        .profile-avatar-camera { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #222b; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .profile-avatar-camera ion-icon { font-size: 2.2em; color: #fff; }
+        .profile-main { flex: 1; }
+        .profile-username-row { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+        .profile-username { font-size: 2em; font-weight: 600; }
+        .profile-btn, .profile-btn-ghost { padding: 7px 18px; border-radius: 8px; border: none; font-size: 1em; font-weight: 500; margin-right: 8px; cursor: pointer; }
+        .profile-btn { background: #222; color: #fff; }
+        .profile-btn-ghost { background: #191919; color: #fff; border: 1px solid #444; }
+        .profile-stats { display: flex; gap: 32px; margin-bottom: 10px; }
+        .profile-stat { text-align: center; }
+        .profile-stat .num { font-weight: 700; font-size: 1.2em; color: #fff; }
+        .profile-stat .label { color: #bdbdbd; font-size: 1em; }
+        .profile-displayname { font-weight: 600; font-size: 1.1em; margin-bottom: 2px; }
+        .profile-handle { color: #bdbdbd; font-size: 1em; margin-bottom: 8px; }
+        .profile-bio { color: #f5f5f5; font-size: 1em; margin-bottom: 18px; }
+        .profile-highlights { display: flex; gap: 32px; margin: 36px 0 18px 0; justify-content: flex-start; }
+        .highlight { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .highlight-img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #444; object-fit: cover; background: #222; display: flex; align-items: center; justify-content: center; }
+        .highlight-label { margin-top: 8px; color: #fff; font-size: 1em; }
+        .highlight-new { border: 2px dashed #888; color: #888; font-size: 2.5em; justify-content: center; }
+        .profile-tabs { display: flex; justify-content: center; gap: 40px; margin: 30px 0 18px 0; border-bottom: 1px solid #222; }
+        .profile-tab { color: #bdbdbd; font-size: 1.3em; padding-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .profile-tab.active { color: #fff; border-bottom: 2px solid #fff; }
+        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .profile-post-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; background: #222; }
+        .post-img-wrap { position: relative; }
+        .delete-post-btn { position: absolute; top: 6px; right: 6px; background: none; border: none; color: #ff4444; font-size: 1.3em; cursor: pointer; display: none; }
+        .delete-highlight-btn { position: absolute; top: 0; right: 0; background: none; border: none; color: #ff4444; font-size: 1.3em; cursor: pointer; display: none; }
+        @media (max-width: 700px) {
+            .profile-header { flex-direction: column; gap: 18px; align-items: flex-start; }
+            .profile-highlights { gap: 18px; }
+            .profile-posts-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main" style="padding-left:40px;padding-right:40px;">
+        <!-- Navbar removed for cleaner profile page -->
+        <div class="profile-header" style="padding-left:24px;padding-right:24px;">
+            <div class="profile-avatar-wrap">
+                <img class="profile-avatar" src="https://ui-avatars.com/api/?name=avi_budha" alt="avatar">
+                <div class="profile-avatar-camera"><ion-icon name="camera"></ion-icon></div>
+            </div>
+            <div class="profile-main">
+                <div class="profile-username-row">
+                    <span class="profile-username">avi_budha</span>
+                    <button class="profile-btn">Edit Profile</button>
+                    <button class="profile-btn-ghost">View archive</button>
+                    <ion-icon name="settings-outline" style="font-size:1.7em;cursor:pointer;"></ion-icon>
+                </div>
+                <div class="profile-stats">
+                    <div class="profile-stat"><div class="num" id="postsCount">0</div><div class="label">posts</div></div>
+                    <div class="profile-stat"><div class="num">188</div><div class="label">followers</div></div>
+                    <div class="profile-stat"><div class="num">179</div><div class="label">following</div></div>
+                </div>
+                <div class="profile-displayname">Avi budha</div>
+                <div class="profile-handle"><ion-icon name="at-outline" style="font-size:1em;vertical-align:middle;"></ion-icon> avi_budha</div>
+                <div class="profile-bio">Bio: Digital artist. Love to create and share art! 🎨✨</div>
+            </div>
+        </div>
+        <div class="profile-highlights" style="padding-left:24px;padding-right:24px;" id="highlightsRow">
+            <!-- Highlights will be rendered here by JS -->
+        </div>
+        <!-- Highlight Modal -->
+        <div id="highlightModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#222;padding:32px 24px;border-radius:18px;max-width:90vw;max-height:80vh;text-align:center;position:relative;">
+                <button id="closeHighlightModal" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#fff;cursor:pointer;">&times;</button>
+                <img id="modalHighlightImg" src="" alt="highlight" style="max-width:320px;max-height:320px;border-radius:16px;margin-bottom:18px;">
+                <div id="modalHighlightLabel" style="color:#fff;font-size:1.2em;font-weight:600;"></div>
+            </div>
+        </div>
+        <!-- New Highlight Modal -->
+        <div id="newHighlightModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#222;padding:32px 24px;border-radius:18px;max-width:90vw;max-height:80vh;text-align:center;position:relative;">
+                <button id="closeNewHighlightModal" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#fff;cursor:pointer;">&times;</button>
+                <div style="color:#fff;font-size:1.1em;margin-bottom:18px;">Select an image and enter a tag for your new highlight:</div>
+                <div id="highlightImageChoices" style="display:flex;gap:18px;justify-content:center;margin-bottom:18px;"></div>
+                <input id="highlightTagInput" type="text" placeholder="Highlight tag name" style="padding:8px 12px;border-radius:8px;border:1px solid #444;background:#191919;color:#fff;margin-bottom:18px;width:70%;"><br>
+                <button class="btnn" id="addHighlightBtn">Add to Highlight</button>
+            </div>
+        </div>
+        <div class="profile-tabs" style="padding-left:24px;padding-right:24px;">
+            <div class="profile-tab active" id="postsTab"><ion-icon name="grid-outline"></ion-icon> POSTS</div>
+            <div class="profile-tab" id="savedTab"><ion-icon name="bookmark-outline"></ion-icon> SAVED</div>
+        </div>
+        <div class="profile-posts-grid" id="postsGrid" style="padding-left:24px;padding-right:24px;">
+            <div class="post-img-wrap" style="position:relative;" data-img="4.jpg" data-likes="12" data-comments='[{"user":"maya","text":"Awesome!"}]'>
+                <img class="profile-post-img" src="4.jpg" alt="post1">
+            </div>
+            <div class="post-img-wrap" style="position:relative;" data-img="peakpx (1).jpg" data-likes="8" data-comments='[]'>
+                <img class="profile-post-img" src="peakpx (1).jpg" alt="post2">
+            </div>
+            <div class="post-img-wrap" style="position:relative;" data-img="im4.jpg" data-likes="5" data-comments='[{"user":"alex","text":"Nice colors!"}]'>
+                <img class="profile-post-img" src="im4.jpg" alt="post3">
+            </div>
+            <div class="post-img-wrap" style="position:relative;" data-img="avi-01.JPG" data-likes="2" data-comments='[]'>
+                <img class="profile-post-img" src="avi-01.JPG" alt="post4">
+            </div>
+            <div class="post-img-wrap" style="position:relative;" data-img="3.jpg" data-likes="0" data-comments='[]'>
+                <img class="profile-post-img" src="3.jpg" alt="post5">
+            </div>
+            <div class="post-img-wrap" style="position:relative;" data-img="2.jpg" data-likes="0" data-comments='[]'>
+                <img class="profile-post-img" src="2.jpg" alt="post6">
+            </div>
+        </div>
+        <!-- Post Modal -->
+        <div id="postModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#222;padding:0;border-radius:18px;max-width:900px;max-height:90vh;text-align:left;position:relative;display:flex;min-width:320px;overflow:hidden;">
+                <button id="closePostModal" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#fff;cursor:pointer;z-index:2;">&times;</button>
+                <button id="postOptionsBtn" style="position:absolute;top:10px;right:56px;font-size:1.7em;background:none;border:none;color:#fff;cursor:pointer;z-index:2;">&#8942;</button>
+                <div id="postOptionsMenu" style="display:none;position:absolute;top:44px;right:56px;background:#191919;border-radius:10px;box-shadow:0 2px 8px #0005;z-index:1100;min-width:180px;text-align:left;">
+                    <button id="editPostBtn" style="display:block;width:100%;padding:10px 18px;background:none;border:none;color:#fff;font-size:1em;text-align:left;cursor:pointer;">Edit Post</button>
+                    <button id="deletePostBtn" style="display:block;width:100%;padding:10px 18px;background:none;border:none;color:#ff4444;font-size:1em;text-align:left;cursor:pointer;">Delete Post</button>
+                    <button id="toggleCommentsBtn" style="display:block;width:100%;padding:10px 18px;background:none;border:none;color:#fff;font-size:1em;text-align:left;cursor:pointer;">Turn Off Comments</button>
+                    <button id="archivePostBtn" style="display:block;width:100%;padding:10px 18px;background:none;border:none;color:#fff;font-size:1em;text-align:left;cursor:pointer;">Archive Post</button>
+                    <button id="addToStoryBtn" style="display:block;width:100%;padding:10px 18px;background:none;border:none;color:#fff;font-size:1em;text-align:left;cursor:pointer;">Add to Story</button>
+                </div>
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;background:#111;min-width:320px;max-width:60vw;">
+                    <img id="modalPostImg" src="" alt="post" style="max-width:100%;max-height:80vh;border-radius:0 0 0 18px;">
+                </div>
+                <div style="width:380px;max-width:100vw;background:#222;display:flex;flex-direction:column;min-height:80vh;position:relative;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:18px 18px 0 18px;">
+                        <img id="modalPostAvatar" src="https://ui-avatars.com/api/?name=avi_budha" alt="avatar" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                        <span id="modalPostUsername" style="font-weight:600;color:#fff;">avi_budha</span>
+                    </div>
+                    <div id="modalPostCaption" style="padding:18px 18px 0 18px;color:#f5f5f5;font-size:1.1em;"></div>
+                    <div id="editCaptionBox" style="display:none;padding:18px 18px 0 18px;">
+                        <textarea id="editCaptionInput" style="width:100%;min-height:60px;padding:8px 10px;border-radius:8px;border:1px solid #444;background:#191919;color:#fff;font-size:1em;"></textarea>
+                        <button id="saveCaptionBtn" class="btnn" style="margin-top:8px;padding:6px 18px;">Save</button>
+                    </div>
+                    <div style="flex:1;overflow-y:auto;">
+                        <div id="modalPostComments" style="padding:0 18px 0 18px;margin-bottom:10px;"></div>
+                    </div>
+                    <div style="padding:0 18px 0 18px;">
+                        <div style="display:flex;align-items:center;gap:18px;margin-bottom:8px;">
+                            <button id="likePostBtn" style="background:none;border:none;cursor:pointer;font-size:1.5em;color:#ff7200;">❤ <span id="modalPostLikes">0</span></button>
+                            <ion-icon name="chatbubble-outline" style="font-size:1.5em;color:#fff;"></ion-icon>
+                            <ion-icon name="paper-plane-outline" style="font-size:1.5em;color:#fff;"></ion-icon>
+                            <ion-icon name="bookmark-outline" style="font-size:1.5em;color:#fff;margin-left:auto;"></ion-icon>
+                        </div>
+                        <div id="modalPostLikedBy" style="color:#bdbdbd;font-size:0.98em;margin-bottom:8px;">Liked by <b>_minson_10</b> and <b>23 others</b></div>
+                        <div id="modalPostTime" style="color:#888;font-size:0.95em;margin-bottom:8px;">12 February 2024</div>
+                    </div>
+                    <form id="addPostCommentForm" style="display:flex;gap:8px;justify-content:center;padding:0 18px 18px 18px;">
+                        <input id="addPostCommentInput" type="text" placeholder="Add a comment..." style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid #444;background:#191919;color:#fff;">
+                        <button type="submit" class="btnn" style="padding:6px 18px;">Post</button>
+                    </form>
+                    <div id="postToast" style="display:none;position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#232526;color:#fff;padding:10px 24px;border-radius:8px;font-size:1em;z-index:1200;">Added to story!</div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center;margin:40px 0 0 0;">
+            <button class="btnn" id="backBtn" style="padding:6px 18px;background:#232526;color:#ff7200;">Back to Dashboard</button>
+        </div>
+    </div>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script>
+    // Back to dashboard
+    const backBtn = document.getElementById('backBtn');
+    if (backBtn) {
+      backBtn.onclick = function() {
+        window.location.href = 'dashboard.html';
+      };
+    }
+    // Posts/Saved tab functionality
+    const postsTab = document.getElementById('postsTab');
+    const savedTab = document.getElementById('savedTab');
+    const postsGrid = document.getElementById('postsGrid');
+    const postsCount = document.getElementById('postsCount');
+    const postsHTML = `
+        <img class='profile-post-img' src='4.jpg' alt='post1'>
+        <img class='profile-post-img' src='peakpx (1).jpg' alt='post2'>
+        <img class='profile-post-img' src='im4.jpg' alt='post3'>
+        <img class='profile-post-img' src='avi-01.JPG' alt='post4'>
+        <img class='profile-post-img' src='3.jpg' alt='post5'>
+        <img class='profile-post-img' src='2.jpg' alt='post6'>
+    `;
+    const savedHTML = `
+        <div class='post-img-wrap' style='position:relative;' data-img='im3.jpg' data-likes='7' data-comments='[{"user":"maya","text":"Saved this!"}]' data-saved='1'><img class='profile-post-img' src='im3.jpg' alt='saved1'></div>
+        <div class='post-img-wrap' style='position:relative;' data-img='peakpx (2).jpg' data-likes='3' data-comments='[]' data-saved='1'><img class='profile-post-img' src='peakpx (2).jpg' alt='saved2'></div>
+        <div class='post-img-wrap' style='position:relative;' data-img='peakpx (3).jpg' data-likes='5' data-comments='[{"user":"alex","text":"Love this!"}]' data-saved='1'><img class='profile-post-img' src='peakpx (3).jpg' alt='saved3'></div>
+        <div class='post-img-wrap' style='position:relative;' data-img='peakpx (4).jpg' data-likes='2' data-comments='[]' data-saved='1'><img class='profile-post-img' src='peakpx (4).jpg' alt='saved4'></div>
+    `;
+    function updatePostsCount() {
+      if (postsCount && postsGrid) {
+        postsCount.textContent = postsGrid.querySelectorAll('.profile-post-img').length;
+      }
+    }
+    if (postsTab && savedTab && postsGrid) {
+      postsTab.onclick = function() {
+        postsTab.classList.add('active');
+        savedTab.classList.remove('active');
+        postsGrid.innerHTML = postsHTML;
+        updatePostsCount();
+      };
+      savedTab.onclick = function() {
+        savedTab.classList.add('active');
+        postsTab.classList.remove('active');
+        postsGrid.innerHTML = savedHTML;
+        updatePostsCount();
+      };
+    }
+    updatePostsCount();
+    // Persistent highlights logic
+    const highlightsRow = document.getElementById('highlightsRow');
+    const highlightNewBtnHTML = `<div class='highlight highlight-new-btn'><div class='highlight-img highlight-new'>+</div><div class='highlight-label'>New</div></div>`;
+    function getHighlights() {
+      return JSON.parse(localStorage.getItem('profileHighlights') || '[]');
+    }
+    function saveHighlights(arr) {
+      localStorage.setItem('profileHighlights', JSON.stringify(arr));
+    }
+    function renderHighlights() {
+      const highlights = getHighlights();
+      highlightsRow.innerHTML = '';
+      highlights.forEach((h, idx) => {
+        const div = document.createElement('div');
+        div.className = 'highlight';
+        div.setAttribute('data-img', h.img);
+        div.setAttribute('data-label', h.label);
+        div.innerHTML = `
+          <img class='highlight-img' src='${h.img}' alt='highlight'><div class='highlight-label'>${h.label}</div>
+          <button class='delete-highlight-btn' style='position:absolute;top:0;right:0;background:none;border:none;color:#ff4444;font-size:1.3em;cursor:pointer;display:none;'><ion-icon name='trash-outline'></ion-icon></button>
+        `;
+        // Modal open logic
+        div.onclick = function(e) {
+          if (e.target.closest('.delete-highlight-btn')) return;
+          modalHighlightImg.src = h.img;
+          modalHighlightLabel.textContent = h.label;
+          highlightModal.style.display = 'flex';
+        };
+        // Show/hide delete button
+        div.onmouseenter = function() {
+          const btn = div.querySelector('.delete-highlight-btn');
+          if (btn) btn.style.display = 'block';
+        };
+        div.onmouseleave = function() {
+          const btn = div.querySelector('.delete-highlight-btn');
+          if (btn) btn.style.display = 'none';
+        };
+        // Delete logic
+        div.querySelector('.delete-highlight-btn').onclick = function(e) {
+          e.stopPropagation();
+          const arr = getHighlights();
+          arr.splice(idx, 1);
+          saveHighlights(arr);
+          renderHighlights();
+        };
+        highlightsRow.appendChild(div);
+      });
+      // Add the New button
+      highlightsRow.insertAdjacentHTML('beforeend', highlightNewBtnHTML);
+      // Attach new highlight modal open
+      const highlightNewBtn = document.querySelector('.highlight-new-btn');
+      if (highlightNewBtn) {
+        highlightNewBtn.onclick = function() {
+          renderHighlightChoices();
+          highlightTagInput.value = '';
+          newHighlightModal.style.display = 'flex';
+        };
+      }
+    }
+    // Add highlight to localStorage and DOM
+    function addHighlightToDOM(img, label) {
+      const arr = getHighlights();
+      arr.push({ img, label });
+      saveHighlights(arr);
+      renderHighlights();
+    }
+    // On page load, render highlights
+    renderHighlights();
+    // Highlights modal logic
+    const highlightEls = document.querySelectorAll('.highlight');
+    const highlightModal = document.getElementById('highlightModal');
+    const modalHighlightImg = document.getElementById('modalHighlightImg');
+    const modalHighlightLabel = document.getElementById('modalHighlightLabel');
+    const closeHighlightModal = document.getElementById('closeHighlightModal');
+    const newHighlightModal = document.getElementById('newHighlightModal');
+    const closeNewHighlightModal = document.getElementById('closeNewHighlightModal');
+    // New highlight logic
+    const highlightImageChoices = document.getElementById('highlightImageChoices');
+    const highlightTagInput = document.getElementById('highlightTagInput');
+    const addHighlightBtn = document.getElementById('addHighlightBtn');
+    let selectedHighlightImg = null;
+    // Demo: get post images
+    const postImages = [
+      '4.jpg', 'peakpx (1).jpg', 'im4.jpg', 'avi-01.JPG', '3.jpg', '2.jpg'
+    ];
+    function renderHighlightChoices() {
+      highlightImageChoices.innerHTML = '';
+      postImages.forEach(img => {
+        const imgEl = document.createElement('img');
+        imgEl.src = img;
+        imgEl.alt = 'post';
+        imgEl.style = 'width:60px;height:60px;border-radius:50%;border:2px solid #444;object-fit:cover;cursor:pointer;background:#222;margin-bottom:0;';
+        imgEl.onclick = function() {
+          Array.from(highlightImageChoices.children).forEach(child => child.style.border = '2px solid #444');
+          imgEl.style.border = '2px solid #ff7200';
+          selectedHighlightImg = img;
+        };
+        highlightImageChoices.appendChild(imgEl);
+      });
+      selectedHighlightImg = null;
+    }
+    // Add highlight to DOM
+    function addHighlightToDOM(img, label) {
+      const highlightsRow = document.querySelector('.profile-highlights');
+      const newDiv = document.createElement('div');
+      newDiv.className = 'highlight';
+      newDiv.setAttribute('data-img', img);
+      newDiv.setAttribute('data-label', label);
+      newDiv.innerHTML = `<img class='highlight-img' src='${img}' alt='highlight'><div class='highlight-label'>${label}</div>`;
+      // Insert before the New button
+      const newBtn = document.querySelector('.highlight-new-btn');
+      highlightsRow.insertBefore(newDiv, newBtn);
+      // Add modal open logic
+      newDiv.onclick = function() {
+        modalHighlightImg.src = img;
+        modalHighlightLabel.textContent = label;
+        highlightModal.style.display = 'flex';
+      };
+    }
+    // New highlight modal open
+    const highlightNewBtn = document.querySelector('.highlight-new-btn');
+    if (highlightNewBtn) {
+      highlightNewBtn.onclick = function() {
+        renderHighlightChoices();
+        highlightTagInput.value = '';
+        newHighlightModal.style.display = 'flex';
+      };
+    }
+    if (addHighlightBtn) {
+      addHighlightBtn.onclick = function() {
+        const tag = highlightTagInput.value.trim();
+        if (!selectedHighlightImg || !tag) {
+          alert('Please select an image and enter a tag name.');
+          return;
+        }
+        addHighlightToDOM(selectedHighlightImg, tag);
+        newHighlightModal.style.display = 'none';
+      };
+    }
+    // Show delete buttons on hover
+    document.querySelectorAll('.highlight').forEach(h => {
+      h.onmouseenter = function() {
+        const btn = h.querySelector('.delete-highlight-btn');
+        if (btn) btn.style.display = 'block';
+      };
+      h.onmouseleave = function() {
+        const btn = h.querySelector('.delete-highlight-btn');
+        if (btn) btn.style.display = 'none';
+      };
+    });
+    document.querySelectorAll('.post-img-wrap').forEach(p => {
+      p.onmouseenter = function() {
+        const btn = p.querySelector('.delete-post-btn');
+        if (btn) btn.style.display = 'block';
+      };
+      p.onmouseleave = function() {
+        const btn = p.querySelector('.delete-post-btn');
+        if (btn) btn.style.display = 'none';
+      };
+    });
+    // Delete highlight
+    document.querySelectorAll('.delete-highlight-btn').forEach(btn => {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        btn.closest('.highlight').remove();
+      };
+    });
+    // Delete post
+    document.querySelectorAll('.delete-post-btn').forEach(btn => {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        btn.closest('.post-img-wrap').remove();
+        updatePostsCount();
+      };
+    });
+    // Post modal logic
+    // Use profile name/avatar for all posts
+    const profileAvatarUrl = 'https://ui-avatars.com/api/?name=avi_budha';
+    const profileUsername = 'avi_budha';
+    const profileCaption = 'Together we can conquer the world 😎<br>📷 - Beloved @_yaa__ri07';
+    const profileLikedBy = '_minson_10';
+    const profileLikeCount = 23;
+    const profileTime = '12 February 2024';
+    // Demo data for saved posts (other users)
+    const savedPostDemoData = {
+      'im3.jpg': {
+        avatar: 'https://ui-avatars.com/api/?name=maya',
+        username: 'maya_draws',
+        caption: 'Saved post from Maya.',
+        likedBy: 'alex_artist',
+        likeCount: 7,
+        time: '10 February 2024'
+      },
+      'peakpx (2).jpg': {
+        avatar: 'https://ui-avatars.com/api/?name=alex',
+        username: 'alex_artist',
+        caption: 'Sunset vibes.',
+        likedBy: 'maya_draws',
+        likeCount: 3,
+        time: '8 February 2024'
+      },
+      'peakpx (3).jpg': {
+        avatar: 'https://ui-avatars.com/api/?name=ravi',
+        username: 'ravi_paints',
+        caption: 'Abstract saved.',
+        likedBy: 'maya_draws',
+        likeCount: 5,
+        time: '5 February 2024'
+      },
+      'peakpx (4).jpg': {
+        avatar: 'https://ui-avatars.com/api/?name=kamal',
+        username: 'kamal.k_8',
+        caption: 'Nature shot.',
+        likedBy: 'kamal.k_8',
+        likeCount: 2,
+        time: '2 February 2024'
+      }
+    };
+    // In-memory edited captions for saved posts
+    const savedPostEditedCaptions = {};
+    const modalPostAvatar = document.getElementById('modalPostAvatar');
+    const modalPostUsername = document.getElementById('modalPostUsername');
+    const modalPostCaption = document.getElementById('modalPostCaption');
+    const modalPostLikedBy = document.getElementById('modalPostLikedBy');
+    const modalPostTime = document.getElementById('modalPostTime');
+    const editPostBtn = document.getElementById('editPostBtn');
+    const editCaptionBox = document.getElementById('editCaptionBox');
+    const editCaptionInput = document.getElementById('editCaptionInput');
+    const saveCaptionBtn = document.getElementById('saveCaptionBtn');
+    document.querySelectorAll('.post-img-wrap').forEach(postEl => {
+      postEl.querySelector('.profile-post-img').onclick = function() {
+        currentPostEl = postEl;
+        const img = postEl.getAttribute('data-img');
+        modalPostImg.src = img;
+        // Use profile data for all posts, except saved posts
+        if (postEl.hasAttribute('data-saved')) {
+          const demo = savedPostDemoData[img] || {};
+          modalPostAvatar.src = demo.avatar || 'https://ui-avatars.com/api/?name=User';
+          modalPostUsername.textContent = demo.username || 'user';
+          // Use edited caption if available
+          modalPostCaption.innerHTML = savedPostEditedCaptions[img] || demo.caption || '';
+          modalPostLikedBy.innerHTML = `Liked by <b>${demo.likedBy || 'someone'}</b> and <b>${demo.likeCount || 0} others</b>`;
+          modalPostTime.textContent = demo.time || '';
+        } else {
+          modalPostAvatar.src = profileAvatarUrl;
+          modalPostUsername.textContent = profileUsername;
+          modalPostCaption.innerHTML = profileCaption;
+          modalPostLikedBy.innerHTML = `Liked by <b>${profileLikedBy}</b> and <b>${profileLikeCount} others</b>`;
+          modalPostTime.textContent = profileTime;
+        }
+        currentPostLikes = parseInt(postEl.getAttribute('data-likes')) || 0;
+        modalPostLikes.textContent = currentPostLikes;
+        try {
+          currentPostComments = JSON.parse(postEl.getAttribute('data-comments')) || [];
+        } catch { currentPostComments = []; }
+        commentsEnabled = !postEl.hasAttribute('data-comments-off');
+        renderPostComments();
+        addPostCommentForm.style.display = commentsEnabled ? 'flex' : 'none';
+        modalPostComments.style.display = commentsEnabled ? 'block' : 'none';
+        toggleCommentsBtn.textContent = commentsEnabled ? 'Turn Off Comments' : 'Turn On Comments';
+        postModal.style.display = 'flex';
+        modalPostCaption.style.display = 'block';
+        editCaptionBox.style.display = 'none';
+        postOptionsMenu.style.display = 'none';
+      };
+    });
+    function renderPostComments() {
+      modalPostComments.innerHTML = '';
+      if (!commentsEnabled) return;
+      if (currentPostComments.length === 0) {
+        modalPostComments.innerHTML = '<div style="color:#bdbdbd;font-size:1em;">No comments yet.</div>';
+      } else {
+        currentPostComments.forEach(c => {
+          const cdiv = document.createElement('div');
+          cdiv.style = 'margin-bottom:4px;font-size:1em;';
+          cdiv.innerHTML = `<span style='color:#ff7200;font-weight:600;'>${c.user}:</span> ${c.text}`;
+          modalPostComments.appendChild(cdiv);
+        });
+      }
+    }
+    if (likePostBtn) {
+      likePostBtn.onclick = function() {
+        currentPostLikes++;
+        modalPostLikes.textContent = currentPostLikes;
+        if (currentPostEl) currentPostEl.setAttribute('data-likes', currentPostLikes);
+      };
+    }
+    if (addPostCommentForm) {
+      addPostCommentForm.onsubmit = function(e) {
+        e.preventDefault();
+        const text = addPostCommentInput.value.trim();
+        if (!text) return;
+        currentPostComments.push({ user: 'you', text });
+        if (currentPostEl) currentPostEl.setAttribute('data-comments', JSON.stringify(currentPostComments));
+        addPostCommentInput.value = '';
+        renderPostComments();
+      };
+    }
+    if (closePostModal) closePostModal.onclick = () => { postModal.style.display = 'none'; postOptionsMenu.style.display = 'none'; };
+    // Three dots menu logic
+    if (postOptionsBtn && postOptionsMenu) {
+      postOptionsBtn.onclick = function(e) {
+        e.stopPropagation();
+        postOptionsMenu.style.display = postOptionsMenu.style.display === 'block' ? 'none' : 'block';
+      };
+      document.body.onclick = function(e) {
+        if (!postOptionsMenu.contains(e.target) && e.target !== postOptionsBtn) {
+          postOptionsMenu.style.display = 'none';
+        }
+      };
+    }
+    // Edit Post logic
+    if (editPostBtn) {
+      editPostBtn.onclick = function() {
+        postOptionsMenu.style.display = 'none';
+        editCaptionInput.value = modalPostCaption.innerHTML.replace(/<br>/g, '\n');
+        modalPostCaption.style.display = 'none';
+        editCaptionBox.style.display = 'block';
+      };
+    }
+    if (saveCaptionBtn) {
+      saveCaptionBtn.onclick = function() {
+        const newCaption = editCaptionInput.value.replace(/\n/g, '<br>');
+        modalPostCaption.innerHTML = newCaption;
+        if (currentPostEl) {
+          if (currentPostEl.hasAttribute('data-saved')) {
+            // Save edited caption for saved post in memory
+            const img = currentPostEl.getAttribute('data-img');
+            savedPostEditedCaptions[img] = newCaption;
+          } else {
+            currentPostEl.setAttribute('data-caption', newCaption);
+          }
+        }
+        modalPostCaption.style.display = 'block';
+        editCaptionBox.style.display = 'none';
+      };
+    }
+    // Delete post
+    if (deletePostBtn) {
+      deletePostBtn.onclick = function() {
+        if (currentPostEl) {
+          currentPostEl.remove();
+          updatePostsCount();
+          postModal.style.display = 'none';
+          postOptionsMenu.style.display = 'none';
+        }
+      };
+    }
+    // Toggle comments
+    if (toggleCommentsBtn) {
+      toggleCommentsBtn.onclick = function() {
+        commentsEnabled = !commentsEnabled;
+        if (currentPostEl) {
+          if (!commentsEnabled) {
+            currentPostEl.setAttribute('data-comments-off', '1');
+          } else {
+            currentPostEl.removeAttribute('data-comments-off');
+          }
+        }
+        addPostCommentForm.style.display = commentsEnabled ? 'flex' : 'none';
+        modalPostComments.style.display = commentsEnabled ? 'block' : 'none';
+        toggleCommentsBtn.textContent = commentsEnabled ? 'Turn Off Comments' : 'Turn On Comments';
+        postOptionsMenu.style.display = 'none';
+      };
+    }
+    // Archive post
+    if (archivePostBtn) {
+      archivePostBtn.onclick = function() {
+        if (currentPostEl) {
+          currentPostEl.style.display = 'none';
+          updatePostsCount();
+          postModal.style.display = 'none';
+          postOptionsMenu.style.display = 'none';
+        }
+      };
+    }
+    // Add to story
+    if (addToStoryBtn) {
+      addToStoryBtn.onclick = function() {
+        postToast.textContent = 'Added to story!';
+        postToast.style.display = 'block';
+        setTimeout(() => { postToast.style.display = 'none'; }, 1800);
+        postOptionsMenu.style.display = 'none';
+      };
+    }
+    </script>
+</body>
+</html> 

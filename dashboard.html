@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard - Artwork</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body, .main { background: #232526 !important; color: #f5f5f5; }
+        .dashboard-layout { display: flex; gap: 32px; max-width: 1400px; margin: 0 auto; padding: 40px 0; }
+        .sidebar-left, .sidebar-right { width: 260px; min-width: 180px; }
+        .sidebar-left { display: flex; flex-direction: column; align-items: flex-end; gap: 32px; }
+        .sidebar-profile { background: #222; border-radius: 18px; padding: 24px 18px; text-align: center; width: 100%; }
+        .sidebar-profile img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #ff7200; margin-bottom: 10px; }
+        .sidebar-profile .username { color: #ff7200; font-weight: 600; font-size: 1.2em; margin-bottom: 4px; }
+        .sidebar-links { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+        .sidebar-link { color: #fff; text-decoration: none; font-size: 1.1em; padding: 10px 0; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s; }
+        .sidebar-link:hover { background: #333; }
+        .main-feed { flex: 1; max-width: 600px; margin: 0 auto; height: 90vh; overflow-y: auto; }
+        .main-feed::-webkit-scrollbar { width: 0 !important; }
+        .main-feed { scrollbar-width: none; -ms-overflow-style: none; }
+        .sidebar-right { display: flex; flex-direction: column; gap: 32px; }
+        .suggestions, .trending, .activity { background: #222; border-radius: 18px; padding: 18px 16px; }
+        .suggestion-user { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .suggestion-user img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #444; }
+        .suggestion-user .username { color: #ff7200; font-weight: 600; font-size: 1em; }
+        .suggestion-user button { margin-left: auto; background: #ff7200; color: #fff; border: none; border-radius: 8px; padding: 4px 14px; cursor: pointer; font-size: 0.95em; }
+        .trending-tag { color: #fff; background: #333; border-radius: 8px; padding: 4px 10px; margin-right: 8px; font-size: 0.98em; display: inline-block; margin-bottom: 6px; }
+        .activity-item { color: #bdbdbd; font-size: 0.98em; margin-bottom: 8px; }
+        @media (max-width: 1100px) {
+            .dashboard-layout { flex-direction: column; gap: 0; }
+            .sidebar-left, .sidebar-right { width: 100%; min-width: 0; flex-direction: row; justify-content: center; }
+            .main-feed { max-width: 98vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="dashboard-layout">
+            <!-- Left Sidebar -->
+            <div class="sidebar-left">
+                <div class="sidebar-profile">
+                    <img src="https://ui-avatars.com/api/?name=avi_budha" alt="avatar">
+                    <div class="username">avi_budha</div>
+                    <div style="color:#bdbdbd;font-size:0.98em;">Avi Budha</div>
+                </div>
+                <div class="sidebar-links">
+                    <a href="#" class="sidebar-link"><ion-icon name="home-outline"></ion-icon> Home</a>
+                    <a href="#" class="sidebar-link"><ion-icon name="search-outline"></ion-icon> Explore</a>
+                    <a href="#" class="sidebar-link"><ion-icon name="chatbubble-outline"></ion-icon> Messages</a>
+                    <a href="#" class="sidebar-link"><ion-icon name="heart-outline"></ion-icon> Notifications</a>
+                    <a href="#" class="sidebar-link"><ion-icon name="add-circle-outline"></ion-icon> Create Post</a>
+                    <a href="profile.html" class="sidebar-link"><ion-icon name="person-circle-outline"></ion-icon> Profile</a>
+                </div>
+            </div>
+            <!-- Main Feed -->
+            <div class="main-feed">
+                <div id="instaFeed" style="margin:0 auto 0 auto;text-align:left;"></div>
+                </div>
+                <div id="sectionExplore" style="display:none;text-align:center;padding:40px 0;">
+                    <h2 style="color:#ff7200;">Explore</h2>
+                    <p style="color:#bdbdbd;">Discover trending art and artists here! (Demo)</p>
+                </div>
+                <div id="sectionMessages" style="display:none;text-align:center;padding:40px 0;">
+                    <h2 style="color:#ff7200;">Messages</h2>
+                    <div style="max-width:400px;margin:30px auto 0 auto;text-align:left;">
+                        <div style="background:#222;border-radius:12px;padding:18px 0;">
+                            <div style="font-weight:600;color:#fff;font-size:1.1em;padding:0 18px 12px 18px;">Chats</div>
+                            <div class="chat-list-item" data-user="maya" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid #333;">
+                                <img src="https://ui-avatars.com/api/?name=maya" alt="maya" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                                <div>
+                                    <div style="color:#ff7200;font-weight:600;">maya_draws</div>
+                                    <div style="color:#bdbdbd;font-size:0.98em;">Hey! Check out my new art.</div>
+                                </div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">2m ago</span>
+                            </div>
+                            <div class="chat-list-item" data-user="alex" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid #333;">
+                                <img src="https://ui-avatars.com/api/?name=alex" alt="alex" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                                <div>
+                                    <div style="color:#ff7200;font-weight:600;">alex_artist</div>
+                                    <div style="color:#bdbdbd;font-size:0.98em;">Loved your last post!</div>
+                                </div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">10m ago</span>
+                            </div>
+                            <div class="chat-list-item" data-user="ravi" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;">
+                                <img src="https://ui-avatars.com/api/?name=ravi" alt="ravi" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                                <div>
+                                    <div style="color:#ff7200;font-weight:600;">ravi_paints</div>
+                                    <div style="color:#bdbdbd;font-size:0.98em;">Let’s collab soon!</div>
+                                </div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">1h ago</span>
+                            </div>
+                            <div class="chat-list-item" data-user="ai" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;">
+                                <img src="https://ui-avatars.com/api/?name=AI" alt="ai" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                                <div>
+                                    <div style="color:#ff7200;font-weight:600;">AI Assistant</div>
+                                    <div style="color:#bdbdbd;font-size:0.98em;">Ask me anything!</div>
+                                </div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">now</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Demo Chat Window -->
+                    <div id="chatWindow" style="display:none;max-width:400px;margin:30px auto 0 auto;background:#222;border-radius:12px;box-shadow:0 2px 8px #0002;">
+                        <div style="display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid #333;">
+                            <img id="chatAvatar" src="" alt="user" style="width:38px;height:38px;border-radius:50%;border:2px solid #444;">
+                            <div id="chatUsername" style="color:#ff7200;font-weight:600;font-size:1.1em;"></div>
+                            <button id="closeChatBtn" style="margin-left:auto;background:none;border:none;color:#fff;font-size:1.3em;cursor:pointer;">&times;</button>
+                        </div>
+                        <div id="chatHistory" style="padding:18px;min-height:120px;max-height:220px;overflow-y:auto;font-size:1em;color:#f5f5f5;"></div>
+                        <form id="chatSendForm" style="display:flex;gap:8px;padding:12px 18px 18px 18px;">
+                            <input id="chatSendInput" type="text" placeholder="Type a message..." style="flex:1;padding:7px 12px;border-radius:8px;border:1px solid #444;background:#191919;color:#fff;">
+                            <button type="submit" class="btnn" style="padding:6px 18px;">Send</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="sectionNotifications" style="display:none;text-align:center;padding:40px 0;">
+                    <h2 style="color:#ff7200;">Notifications</h2>
+                    <div style="max-width:400px;margin:30px auto 0 auto;text-align:left;">
+                        <div style="background:#222;border-radius:12px;padding:18px 0;">
+                            <div style="font-weight:600;color:#fff;font-size:1.1em;padding:0 18px 12px 18px;">Recent</div>
+                            <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #333;">
+                                <ion-icon name="heart-outline" style="color:#ff7200;font-size:1.3em;"></ion-icon>
+                                <div style="color:#fff;">maya_draws liked your post</div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">2m ago</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #333;">
+                                <ion-icon name="person-add-outline" style="color:#ff7200;font-size:1.3em;"></ion-icon>
+                                <div style="color:#fff;">alex_artist started following you</div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">10m ago</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;">
+                                <ion-icon name="chatbubble-outline" style="color:#ff7200;font-size:1.3em;"></ion-icon>
+                                <div style="color:#fff;">ravi_paints commented: "Amazing!"</div>
+                                <span style="margin-left:auto;color:#888;font-size:0.95em;">1h ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="sectionCreatePost" style="display:none;text-align:center;padding:40px 0;">
+                    <h2 style="color:#ff7200;">Create Post</h2>
+                    <div style="color:#bdbdbd;">Post creation coming soon! (Demo)</div>
+                </div>
+                <div id="sectionProfile" style="display:none;text-align:center;padding:40px 0;">
+                    <h2 style="color:#ff7200;">Profile</h2>
+                    <div style="color:#bdbdbd;">Go to your <a href="profile.html" style="color:#ff7200;">profile page</a>.</div>
+                </div>
+            </div>
+            <!-- Right Sidebar -->
+            <div class="sidebar-right">
+                <div class="suggestions">
+                    <div style="font-weight:600;color:#fff;margin-bottom:10px;">Suggestions for you</div>
+                    <div class="suggestion-user"><img src="https://ui-avatars.com/api/?name=maya" alt="maya"><span class="username">maya_draws</span><button>Follow</button></div>
+                    <div class="suggestion-user"><img src="https://ui-avatars.com/api/?name=alex" alt="alex"><span class="username">alex_artist</span><button>Follow</button></div>
+                    <div class="suggestion-user"><img src="https://ui-avatars.com/api/?name=ravi" alt="ravi"><span class="username">ravi_paints</span><button>Follow</button></div>
+                </div>
+                <div class="trending">
+                    <div style="font-weight:600;color:#fff;margin-bottom:10px;">Trending Tags</div>
+                    <span class="trending-tag">#art</span>
+                    <span class="trending-tag">#digital</span>
+                    <span class="trending-tag">#anime</span>
+                    <span class="trending-tag">#sketch</span>
+                    <span class="trending-tag">#creative</span>
+                </div>
+                <div class="activity">
+                    <div style="font-weight:600;color:#fff;margin-bottom:10px;">Recent Activity</div>
+                    <div class="activity-item">maya_draws liked your post</div>
+                    <div class="activity-item">alex_artist started following you</div>
+                    <div class="activity-item">ravi_paints commented: "Amazing!"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script>
+    // Sidebar navigation logic
+    const sectionIds = ['sectionHome','sectionExplore','sectionMessages','sectionNotifications','sectionCreatePost','sectionProfile'];
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    sidebarLinks.forEach((link, idx) => {
+      link.onclick = function(e) {
+        e.preventDefault();
+        sectionIds.forEach((id, i) => {
+          const sec = document.getElementById(id);
+          if (sec) sec.style.display = (i === idx) ? '' : 'none';
+        });
+      };
+    });
+    // Logout button returns to main page
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.onclick = function() {
+        window.location.href = 'index.html';
+      };
+    }
+    // Profile avatar button navigates to profile.html
+    const profileAvatarBtn = document.getElementById('profileAvatarBtn');
+    if (profileAvatarBtn) {
+      profileAvatarBtn.onclick = function() {
+        window.location.href = 'profile.html';
+      };
+    }
+    // Instagram-like Feed Demo
+    const demoPosts = [
+      {
+        avatar: 'https://ui-avatars.com/api/?name=Alex',
+        username: 'alex_artist',
+        image: '1.jpg',
+        caption: 'Exploring new colors today! #artlife',
+        likes: 12,
+        comments: [
+          { user: 'maya', text: 'Love this!' },
+          { user: 'ravi', text: 'Amazing work!' }
+        ]
+      },
+      {
+        avatar: 'https://ui-avatars.com/api/?name=Maya',
+        username: 'maya_draws',
+        image: 'im3.jpg',
+        caption: 'Digital sketch from last night.',
+        likes: 8,
+        comments: []
+      },
+      {
+        avatar: 'https://ui-avatars.com/api/?name=Ravi',
+        username: 'ravi_paints',
+        image: '4.jpg',
+        caption: 'Abstract vibes.',
+        likes: 5,
+        comments: [
+          { user: 'alex_artist', text: 'So cool!' }
+        ]
+      }
+    ];
+    const instaFeed = document.getElementById('instaFeed');
+    function renderFeed() {
+      instaFeed.innerHTML = '';
+      demoPosts.forEach((post, idx) => {
+        const postDiv = document.createElement('div');
+        postDiv.style = 'background:#fff2;border-radius:16px;padding:18px 16px;margin-bottom:32px;box-shadow:0 2px 8px #0001;';
+        postDiv.innerHTML = `
+          <div style='display:flex;align-items:center;margin-bottom:10px;'>
+            <img src='${post.avatar}' alt='avatar' style='width:40px;height:40px;border-radius:50%;margin-right:12px;border:2px solid #ff7200;'>
+            <span style='font-weight:600;color:#ff7200;'>${post.username}</span>
+          </div>
+          <img src='${post.image}' alt='post' style='width:100%;max-height:320px;object-fit:cover;border-radius:12px;background:#eee;'>
+          <div style='margin:10px 0 6px 0;font-size:1.1em;'>${post.caption}</div>
+          <div style='display:flex;align-items:center;gap:18px;'>
+            <button class='like-btn' style='background:none;border:none;cursor:pointer;font-size:1.2em;color:#ff7200;'>❤ <span>${post.likes}</span></button>
+            <button class='comment-btn' style='background:none;border:none;cursor:pointer;font-size:1.2em;color:#232526;'>💬 <span>${post.comments.length}</span></button>
+          </div>
+          <div class='comments-section' style='display:none;margin-top:10px;'></div>
+          <form class='add-comment-form' style='display:none;margin-top:8px;display:flex;gap:6px;'>
+            <input type='text' class='comment-input' placeholder='Add a comment...' style='flex:1;padding:4px 8px;border-radius:6px;border:1px solid #ccc;'>
+            <button type='submit' class='btnn' style='padding:4px 12px;font-size:0.95em;'>Post</button>
+          </form>
+        `;
+        // Like button
+        const likeBtn = postDiv.querySelector('.like-btn');
+        likeBtn.onclick = () => {
+          demoPosts[idx].likes++;
+          renderFeed();
+        };
+        // Comment button
+        const commentBtn = postDiv.querySelector('.comment-btn');
+        const commentsSection = postDiv.querySelector('.comments-section');
+        const addCommentForm = postDiv.querySelector('.add-comment-form');
+        let commentsVisible = false;
+        commentBtn.onclick = () => {
+          commentsVisible = !commentsVisible;
+          commentsSection.style.display = commentsVisible ? 'block' : 'none';
+          addCommentForm.style.display = commentsVisible ? 'flex' : 'none';
+          renderComments();
+        };
+        // Render comments
+        function renderComments() {
+          commentsSection.innerHTML = '';
+          if (demoPosts[idx].comments.length === 0) {
+            commentsSection.innerHTML = '<p style="color:#888;font-size:0.98em;">No comments yet.</p>';
+          } else {
+            demoPosts[idx].comments.forEach(c => {
+              const cdiv = document.createElement('div');
+              cdiv.style = 'margin-bottom:4px;font-size:0.98em;';
+              cdiv.innerHTML = `<span style='color:#ff7200;font-weight:600;'>${c.user}:</span> ${c.text}`;
+              commentsSection.appendChild(cdiv);
+            });
+          }
+        }
+        // Add comment
+        addCommentForm.onsubmit = function(ev) {
+          ev.preventDefault();
+          const input = addCommentForm.querySelector('.comment-input');
+          const text = input.value.trim();
+          if (!text) return;
+          demoPosts[idx].comments.push({ user: 'you', text });
+          input.value = '';
+          renderComments();
+          commentBtn.querySelector('span').textContent = demoPosts[idx].comments.length;
+        };
+        instaFeed.appendChild(postDiv);
+      });
+    }
+    renderFeed();
+    // Demo chat logic (add AI Assistant)
+    const chatData = {
+      maya: [
+        { from: 'them', text: 'Hey! Check out my new art.' },
+        { from: 'me', text: 'Looks awesome!' }
+      ],
+      alex: [
+        { from: 'them', text: 'Loved your last post!' },
+        { from: 'me', text: 'Thanks Alex!' }
+      ],
+      ravi: [
+        { from: 'them', text: 'Let’s collab soon!' },
+        { from: 'me', text: 'Sure, DM me your idea.' }
+      ],
+      ai: [
+        { from: 'them', text: 'Hi! I am your AI Assistant. Ask me anything.' }
+      ]
+    };
+    const chatAvatars = {
+      maya: 'https://ui-avatars.com/api/?name=maya',
+      alex: 'https://ui-avatars.com/api/?name=alex',
+      ravi: 'https://ui-avatars.com/api/?name=ravi',
+      ai: 'https://ui-avatars.com/api/?name=AI'
+    };
+    const chatUsernames = {
+      maya: 'maya_draws',
+      alex: 'alex_artist',
+      ravi: 'ravi_paints',
+      ai: 'AI Assistant'
+    };
+    let currentChatUser = null;
+    const chatWindow = document.getElementById('chatWindow');
+    const chatAvatar = document.getElementById('chatAvatar');
+    const chatUsername = document.getElementById('chatUsername');
+    const chatHistory = document.getElementById('chatHistory');
+    const chatSendForm = document.getElementById('chatSendForm');
+    const chatSendInput = document.getElementById('chatSendInput');
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    document.querySelectorAll('.chat-list-item').forEach(item => {
+      item.onclick = function() {
+        currentChatUser = item.getAttribute('data-user');
+        chatAvatar.src = chatAvatars[currentChatUser];
+        chatUsername.textContent = chatUsernames[currentChatUser];
+        renderChatHistory();
+        chatWindow.style.display = '';
+      };
+    });
+    function renderChatHistory() {
+      chatHistory.innerHTML = '';
+      (chatData[currentChatUser] || []).forEach(msg => {
+        const div = document.createElement('div');
+        div.style = 'margin-bottom:8px;text-align:' + (msg.from === 'me' ? 'right' : 'left') + ';';
+        div.innerHTML = `<span style='background:${msg.from === 'me' ? '#ff7200' : '#333'};color:#fff;padding:6px 12px;border-radius:12px;display:inline-block;'>${msg.text}</span>`;
+        chatHistory.appendChild(div);
+      });
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    if (chatSendForm) {
+      chatSendForm.onsubmit = function(e) {
+        e.preventDefault();
+        const text = chatSendInput.value.trim();
+        if (!text || !currentChatUser) return;
+        chatData[currentChatUser].push({ from: 'me', text });
+        chatSendInput.value = '';
+        renderChatHistory();
+        // AI Assistant logic (demo, replace with real API call)
+        if (currentChatUser === 'ai') {
+          setTimeout(() => {
+            chatData.ai.push({ from: 'them', text: 'AI says: ' + text });
+            renderChatHistory();
+          }, 800);
+        }
+      };
+    }
+    if (closeChatBtn) closeChatBtn.onclick = function() { chatWindow.style.display = 'none'; };
+    </script>
+</body>
+</html> 
